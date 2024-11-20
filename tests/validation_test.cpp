@@ -3,9 +3,14 @@
 #include "sequential_tree.h"
 #include "parellel_tree.h"
 
+#include <gtest/gtest.h>
+#include <thread>
+#include "sequential_tree.h"
+#include "parellel_tree.h"
+
+// Pruebas para SequentialTree
 TEST(SequentialTest, pruebaSimple) {
-  SequentialTree* arbol_datos;
-  arbol_datos = new SequentialTree({18, 0, 17});
+  SequentialTree* arbol_datos = new SequentialTree({18, 0, 17});
   arbol_datos->left = new SequentialTree({25, 20});
   arbol_datos->right = new SequentialTree({17, 19, 0});
   arbol_datos->left->left = new SequentialTree({20, 22});
@@ -52,34 +57,36 @@ TEST(SequentialTest, pruebaThreadSafe) {
   }
 
   SequentialTree* arbol_datos = nullptr;
+  std::vector<std::thread> hilos;
 
-    std::vector<std::thread> hilos;
-    for (int i = 0; i < NUMERO_VECTORES; i++) {
-        hilos.push_back(std::thread([&arbol_datos, NUMERO_ELEMENTOS]()
-        {
-          std::vector<double> tmp(NUMERO_ELEMENTOS);
-          for(int j = 0; j < NUMERO_ELEMENTOS; ++j)
-            tmp[j] = j;
+  for (int i = 0; i < NUMERO_VECTORES; i++) {
+    hilos.push_back(std::thread([&arbol_datos, NUMERO_ELEMENTOS]() {
+      std::vector<double> tmp(NUMERO_ELEMENTOS);
+      for(int j = 0; j < NUMERO_ELEMENTOS; ++j)
+        tmp[j] = j;
 
-          if(arbol_datos == nullptr)
-            arbol_datos = new SequentialTree(tmp);
-          else
-            arbol_datos->insert(tmp);
-        }));
-    }
+      if(arbol_datos == nullptr)
+        arbol_datos = new SequentialTree(tmp);
+      else
+        arbol_datos->insert(tmp);
+    }));
+  }
 
-    std::for_each(hilos.begin(), hilos.end(), [](std::thread &th)
-    {
-        th.join();
-    });
+  std::for_each(hilos.begin(), hilos.end(), [](std::thread &th) {
+    th.join();
+  });
 
   EXPECT_EQ(arbol_datos->contadorEstaciones, NUMERO_VECTORES);
   EXPECT_EQ(arbol_datos->contadorEstaciones, arbol_ref->contadorEstaciones);
   EXPECT_EQ(arbol_datos->calculateMaxAverage(), arbol_ref->calculateMaxAverage());
 
-  TEST(ParallelTest, pruebaSimple) {
-  ParallelTree* arbol_datos;
-  arbol_datos = new ParallelTree({18, 0, 17});
+  delete arbol_datos;
+  delete arbol_ref;
+}
+
+// Pruebas para ParallelTree
+TEST(ParallelTest, pruebaSimple) {
+  ParallelTree* arbol_datos = new ParallelTree({18, 0, 17});
   arbol_datos->left = new ParallelTree({25, 20});
   arbol_datos->right = new ParallelTree({17, 19, 0});
   arbol_datos->left->left = new ParallelTree({20, 22});
@@ -126,31 +133,28 @@ TEST(ParallelTest, pruebaThreadSafe) {
   }
 
   ParallelTree* arbol_datos = nullptr;
+  std::vector<std::thread> hilos;
 
-    std::vector<std::thread> hilos;
-    for (int i = 0; i < NUMERO_VECTORES; i++) {
-        hilos.push_back(std::thread([&arbol_datos, NUMERO_ELEMENTOS]()
-        {
-          std::vector<double> tmp(NUMERO_ELEMENTOS);
-          for(int j = 0; j < NUMERO_ELEMENTOS; ++j)
-            tmp[j] = j;
+  for (int i = 0; i < NUMERO_VECTORES; i++) {
+    hilos.push_back(std::thread([&arbol_datos, NUMERO_ELEMENTOS]() {
+      std::vector<double> tmp(NUMERO_ELEMENTOS);
+      for(int j = 0; j < NUMERO_ELEMENTOS; ++j)
+        tmp[j] = j;
 
-          if(arbol_datos == nullptr)
-            arbol_datos = new ParallelTree(tmp);
-          else
-            arbol_datos->insert(tmp);
-        }));
-    }
+      if(arbol_datos == nullptr)
+        arbol_datos = new ParallelTree(tmp);
+      else
+        arbol_datos->insert(tmp);
+    }));
+  }
 
-    std::for_each(hilos.begin(), hilos.end(), [](std::thread &th)
-    {
-        th.join();
-    });
+  std::for_each(hilos.begin(), hilos.end(), [](std::thread &th) {
+    th.join();
+  });
 
   EXPECT_EQ(arbol_datos->contadorEstaciones, NUMERO_VECTORES);
   EXPECT_EQ(arbol_datos->contadorEstaciones, arbol_ref->contadorEstaciones);
   EXPECT_EQ(arbol_datos->calculateMaxAverage(), arbol_ref->calculateMaxAverage());
-
 
   delete arbol_datos;
   delete arbol_ref;
