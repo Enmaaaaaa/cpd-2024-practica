@@ -6,6 +6,7 @@ ParallelTree::ParallelTree(const std::vector<double>& data)
 double ParallelTree::calculateMaxAverage() {
   return calculateMaxAverageInternal(this);
 }
+std::mutex tree_mutex;
 
 double ParallelTree::calculateMaxAverageInternal(SensorTree* node_ptr) {
   if(node_ptr == nullptr) return 0.0;
@@ -23,10 +24,17 @@ double ParallelTree::calculateMaxAverageInternal(SensorTree* node_ptr) {
   double current_avg = 0.0;
   if(cont > 0) current_avg = sum / (double)cont;
 
-  // llamadas recursivas para los hijos
-  double max_avg_left = calculateMaxAverageInternal(node_ptr->left);
-  double max_avg_right = calculateMaxAverageInternal(node_ptr->right);
-
+  #pragma omp parallel sections
+  {
+    #pragma omp section
+    {
+      max_avg_left = calculateMaxAverageInternal(node_ptr->left);
+    }
+    #pragma omp section
+    {
+      max_avg_right = calculateMaxAverageInternal(node_ptr->right);
+    }
+  }
   // retornamos el máximo del promedio del nodo y sus hijos
   return std::max(std::max(current_avg, max_avg_left), max_avg_right);
 }
