@@ -1,4 +1,5 @@
 #include "parellel_tree.h"
+#include <mutex>
 
 ParallelTree::ParallelTree(const std::vector<double>& data)
     : SensorTree(data), contadorEstaciones(1) {}
