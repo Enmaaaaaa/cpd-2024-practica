@@ -4,8 +4,10 @@
 #include <thread>
 
 #include "sequential_tree.h"
+#include "parellel_tree.h"
 
 static SequentialTree* arbol_datos = nullptr;
+static ParallelTree* arbol_datos = nullptr;
 static const int VALOR_MEDIO = 10;
 static const int NUMERO_ELEMENTOS = 5;
 static const int NUMERO_VECTORES = 50;
@@ -35,7 +37,15 @@ static void BM_secuencial(benchmark::State& state) {
   }
 }
 
+static void BM_parallel(benchmark::State& state) {
+  for(auto _ : state) {
+    double res = arbol_datos->calculateMaxAverage();
+    benchmark::DoNotOptimize(res);
+  }
+}
+
 BENCHMARK(BM_secuencial)->UseRealTime()->Unit(benchmark::kMillisecond);
+BENCHMARK(BM_parallel)->UseRealTime()->Unit(benchmark::kMillisecond);
 
 int main(int argc, char** argv) {
   inicializa();
