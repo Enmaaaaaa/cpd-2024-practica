@@ -23,6 +23,8 @@ double ParallelTree::calculateMaxAverageInternal(SensorTree* node_ptr) {
   }
   // obtnemos promedio
   double current_avg = 0.0;
+  double max_avg_left = 0.0;
+  double max_avg_right = 0.0;
   if(cont > 0) current_avg = sum / (double)cont;
 
   #pragma omp parallel sections
