@@ -51,7 +51,6 @@ void ParallelTree::insert(const std::vector<double>& data) {
 
 void ParallelTree::insertInternal(SensorTree* node_ptr,
                                     const std::vector<double>& data) {
-  std::lock_guard<std::mutex> lock(node_ptr->mtx); //
   if(node_ptr == nullptr) {
     node_ptr = new ParallelTree(data);
     return;
