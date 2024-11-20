@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <thread>
 #include "sequential_tree.h"
+#include "parellel_tree.h"
 
 TEST(SequentialTest, pruebaSimple) {
   SequentialTree* arbol_datos;
@@ -50,7 +51,7 @@ TEST(SequentialTest, pruebaThreadSafe) {
       arbol_ref->insert(tmp);
   }
 
-  SequentialTree* arbol_datos = nullptr;
+  ParallelTree* arbol_datos = nullptr;
 
     std::vector<std::thread> hilos;
     for (int i = 0; i < NUMERO_VECTORES; i++) {
@@ -61,7 +62,7 @@ TEST(SequentialTest, pruebaThreadSafe) {
             tmp[j] = j;
 
           if(arbol_datos == nullptr)
-            arbol_datos = new SequentialTree(tmp);
+            arbol_datos = new ParallelTree(tmp);
           else
             arbol_datos->insert(tmp);
         }));
