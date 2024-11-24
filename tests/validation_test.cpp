@@ -115,9 +115,9 @@ TEST(ParallelTest, pruebaVacio) {
 }
 
 TEST(ParallelTest, pruebaThreadSafe) {
-  const int VALOR_MEDIO = 10;
-  const int NUMERO_ELEMENTOS = 5;
-  const int NUMERO_VECTORES = 20;
+  const int VALOR_MEDIO = 20;
+  const int NUMERO_ELEMENTOS = 10;
+  const int NUMERO_VECTORES = 40;
 
   ParallelTree* arbol_ref = nullptr;
 
